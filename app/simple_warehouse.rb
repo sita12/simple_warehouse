@@ -1,6 +1,8 @@
 class SimpleWarehouse
 
   require 'colorize'
+  require 'quickchart'
+  require 'json'
 
   attr_accessor :width, :height, :data
 
@@ -19,6 +21,8 @@ class SimpleWarehouse
           initialize_warehouse(c[1], c[2])  
         when "store #{c[1]} #{c[2]} #{c[3]} #{c[4]} #{c[5]}" 
           store_value(c[1].to_i, c[2].to_i, c[3].to_i, c[4].to_i, c[5])  
+        when "locate #{c[1]}"  
+          locate(c[1])  
         when 'exit'
           exit
         else
@@ -87,5 +91,54 @@ class SimpleWarehouse
     if @width.nil? || @height.nil? || x > @width || y > @height || (x+w) > @width || (y+h) > @height
       return 0
     end  
+  end
+
+  def locate(value)
+    if @data["#{value}"]
+      graph({ "#{value}": @data["#{value}"]})
+    else
+      puts "Error: Either Warehouse is not initialized or Crate Doesn't exist in the warehouse".red
+    end     
+  end
+
+  def graph(products)
+    qc = QuickChart.new(
+      {
+        type:'line',
+        data:{
+          labels: (1..@width).to_a, 
+          datasets: dataset(products)
+        }
+      }      
+    )
+    puts (qc.get_url).green
+  end
+
+  def dataset(products)
+    sets = []
+    data = get_colors
+    products.each.with_index do |product, i|
+      set = {}
+      set[:label] = product[0]
+      point = product[1]
+      set[:data] = create_data(point)
+      set[:fill] = false
+      set[:borderColor] = data[i]["hex"]
+      sets << set
+    end  
+    sets
+  end
+
+  def get_colors
+    file = File.read('./app/colors.json')
+    JSON.parse(file)
+  end
+
+  def create_data(point)
+    data = [ 
+            { x: point[:x_cord], y: point[:y_cord]}, { x: (point[:x_cord]+ point[:w]), y: point[:y_cord]}, 
+            { x: (point[:x_cord]+ point[:w]), y: (point[:y_cord]+ point[:h])}, 
+            { x: point[:x_cord], y: (point[:y_cord]+ point[:h])}, { x: point[:x_cord], y: point[:y_cord]} 
+          ]
   end
 end
