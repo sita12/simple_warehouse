@@ -22,7 +22,9 @@ class SimpleWarehouse
         when "store #{c[1]} #{c[2]} #{c[3]} #{c[4]} #{c[5]}" 
           store_value(c[1].to_i, c[2].to_i, c[3].to_i, c[4].to_i, c[5])  
         when "locate #{c[1]}"  
-          locate(c[1])  
+          locate(c[1]) 
+        when "remove #{c[1]} #{c[2]}" 
+          remove(c[1], c[2])   
         when 'exit'
           exit
         else
@@ -140,5 +142,14 @@ class SimpleWarehouse
             { x: (point[:x_cord]+ point[:w]), y: (point[:y_cord]+ point[:h])}, 
             { x: point[:x_cord], y: (point[:y_cord]+ point[:h])}, { x: point[:x_cord], y: point[:y_cord]} 
           ]
+  end
+
+  def remove(x, y)
+    size = @data.size
+    @data.delete_if { |k, v| 
+      v[:x] == x.to_i && v[:y] == y.to_i
+    }
+    puts data.size == size ? "Error: Either Warehouse is not initialized or Crate Doesn't exist in the warehouse".red :
+    "Crate is Deleted Successfully".green
   end
 end

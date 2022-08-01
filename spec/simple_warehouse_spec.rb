@@ -42,4 +42,17 @@ describe SimpleWarehouse do
             end.to output(/Either Warehouse is not initialized or Crate Doesn't exist in the warehouse/).to_stdout
         end
     end
+    describe '.remove' do
+        it 'should remove crate' do
+            @warehouse.store_value(3, 2, 4, 3, "P")
+            size = @warehouse.data.size
+            @warehouse.remove(3, 2)
+            @warehouse.data.size.should == size - 1
+        end
+        it 'should not remove crate' do
+            size = @warehouse.data.size
+            @warehouse.remove(5, 6)
+            @warehouse.data.size.should == size
+        end
+    end
 end
