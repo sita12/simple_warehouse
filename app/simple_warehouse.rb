@@ -17,8 +17,6 @@ class SimpleWarehouse
     end
   end
 
-  private
-
   def show_help_message
     puts <<~HELP
       help             Shows this help message
