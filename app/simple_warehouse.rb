@@ -24,7 +24,9 @@ class SimpleWarehouse
         when "locate #{c[1]}"  
           locate(c[1]) 
         when "remove #{c[1]} #{c[2]}" 
-          remove(c[1], c[2])   
+          remove(c[1], c[2])  
+        when "view"  
+          view   
         when 'exit'
           exit
         else
@@ -151,5 +153,13 @@ class SimpleWarehouse
     }
     puts data.size == size ? "Error: Either Warehouse is not initialized or Crate Doesn't exist in the warehouse".red :
     "Crate is Deleted Successfully".green
+  end
+
+  def view
+    if @width
+      graph(@data)
+    else  
+      puts "Error: Initialize Warehouse First".red
+    end 
   end
 end
